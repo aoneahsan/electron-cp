@@ -1,0 +1,29 @@
+{
+  "name": "electron-cp",
+  "version": "1.0.0",
+  "description": "electron app",
+  "main": "main.js",
+  "scripts": {
+    "start": "nodemon --exec 'electron .'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ahsanmahmood/electron-cp.git"
+  },
+  "keywords": [
+    "electron"
+  ],
+  "author": "Ahsan Mahmood",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ahsanmahmood/electron-cp/issues"
+  },
+  "homepage": "https://github.com/ahsanmahmood/electron-cp#readme",
+  "dependencies": {
+    "electron-window-state": "^5.0.3"
+  },
+  "devDependencies": {
+    "electron": "^11.1.1",
+    "nodemon": "^2.0.6"
+  }
+}
