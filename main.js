@@ -1,13 +1,16 @@
-const { app, BrowserWindow } = require("electron");
+const { app, BrowserWindow, ipcMain } = require("electron");
 const electronWindowState = require("electron-window-state");
+
+// cusotm fiels
+const renderItem = require("./renderItem.js");
 
 let mainWindow;
 
 const createMainWindow = () => {
   // this is to save the last state of app (like what was the location of app when it closed)
   let mainWindowState = electronWindowState({
-    defaultWidth: 500,
-    defaultHeight: 600,
+    defaultWidth: 1500,
+    defaultHeight: 1600,
   });
 
   // creating a new browser window object for app
@@ -16,9 +19,9 @@ const createMainWindow = () => {
     height: mainWindowState.height,
     x: mainWindowState.x,
     y: mainWindowState.y,
-    minWidth: 400,
-    minHeight: 500,
-    maxWidth: 650,
+    minWidth: 1200,
+    minHeight: 600,
+    maxWidth: 1650,
     webPreferences: {
       // devTools: true, // see in docs what is it for
       nodeIntegration: true,
@@ -32,7 +35,7 @@ const createMainWindow = () => {
   mainWindow.loadFile("./renderer/main.html");
 
   // opening devtools for inspect/debugingpurposes
-  // mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
 
   // on main browser window close clearing mainwindow object
   mainWindow.on("closed", () => {
@@ -55,4 +58,14 @@ app.on("activate", () => {
   if (mainWindow === null) {
     createMainWindow();
   }
+});
+
+// CUSTOM CODE
+
+// listening for events from renderer
+ipcMain.on("new-item", (e, url) => {
+  console.log("url from ipcrenderer = ", url);
+  renderItem(url, (pageData) => {
+    e.sender.send("new-item-success", pageData);
+  });
 });
