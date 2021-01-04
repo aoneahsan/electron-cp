@@ -1,8 +1,9 @@
 // alert("ok");
 const $ = require("jquery");
-const { remote, ipcRenderer } = require("electron");
+const { remote, ipcRenderer, TouchBarOtherItemsProxy } = require("electron");
 // const {  } = remote;
 // const icon = require("boxicons");
+const items = require("./items");
 
 const modal_con = $("#modal-con");
 const close_modal = $(".close-modal");
@@ -54,7 +55,7 @@ item_title.on("keyup", function (e) {
 
 // Event - new item success event
 ipcRenderer.on("new-item-success", (e, data) => {
-  console.log("new-item-success == data = ", data);
+  items.addItem(data, true);
   enableAddBtn();
   close_modal.click();
   item_title.val("");

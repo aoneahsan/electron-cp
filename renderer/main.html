@@ -22,9 +22,8 @@
           <input
             type="search"
             name=""
-            id=""
-            @keydown.enter="getImages()"
-            placeholder="search for images"
+            id="search"
+            placeholder="Search for Links"
             x-model="q"
             class="w-full pl-4 text-sm outline-none focus:outline-none bg-transparent"
           />
@@ -33,59 +32,15 @@
     </div>
     <!-- top search bar ends  -->
     <!-- card component starts -->
-    <div class="items pt-14 hi">
-      <div
-        class="md:flex shadow-lg mx-6 md:mx-auto mt-5 max-w-lg md:max-w-2xl h-64 hidden-"
-      >
-        <img
-          class="h-full w-full md:w-1/3 object-cover rounded-lg rounded-r-none pb-5/6"
-          src="https://ik.imagekit.io/q5edmtudmz/FB_IMG_15658659197157667_wOd8n5yFyXI.jpg"
-          alt="bag"
-        />
-        <div class="w-full md:w-2/3 px-4 py-4 bg-white rounded-lg">
-          <div class="flex items-center">
-            <h2 class="text-xl text-gray-800 font-medium mr-auto">
-              Your Travel Buddy
-            </h2>
-          </div>
-          <p class="text-sm text-gray-700 mt-4">
-            Lorem, ipsum dolor sit amet consectetur Amet veritatis ipsam
-            reiciendis numquam tempore commodi ipsa suscipit laboriosam, sit
-            earum at sequ adipisicing elit. Amet veritatis ipsam reiciendis
-            numquam tempore commodi ipsa suscipit laboriosam, sit earum at
-            sequi.
-          </p>
-          <div class="flex items-center justify-end mt-4 top-auto">
-            <button
-              class="bg-white text-red-500 px-4 py-2 rounded mr-auto hover:underline"
-            >
-              Delete
-            </button>
-            <button class="bg-gray-200 text-blue-600 px-2 py-2 rounded-md mr-2">
-              Edit
-            </button>
-            <button class="bg-blue-600 text-gray-200 px-2 py-2 rounded-md">
-              Publish
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="no-items pt-20">
+    <div id="items_con" class="items pt-14 px-5"></div>
+    <div id="no_items_con" class="no-items pt-20">
       <h3 class="text-gray-400 text-center text-3xl">No Items</h3>
     </div>
-    <!-- card component ends -->
-
-    <!-- modal starts -->
-
     <div id="modal-con" class="fixed z-10 inset-0 overflow-y-auto hidden">
       <div
         class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0"
       >
-        <div
-          class="fixed inset-0 transition-opacity"
-          aria-hidden="true"
-        >
+        <div class="fixed inset-0 transition-opacity" aria-hidden="true">
           <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
         </div>
         <span
@@ -112,6 +67,7 @@
                   <input
                     type="text"
                     id="title"
+                    value="https://google.com"
                     name="item-title"
                     class="border border-solid w-full py-2 px-6"
                   />
@@ -136,7 +92,6 @@
         </div>
       </div>
     </div>
-    <!-- modal ends -->
   </body>
   <script>
     require("./app.js");

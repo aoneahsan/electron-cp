@@ -19,9 +19,9 @@ const createMainWindow = () => {
     height: mainWindowState.height,
     x: mainWindowState.x,
     y: mainWindowState.y,
-    minWidth: 1200,
+    minWidth: 400,
     minHeight: 600,
-    maxWidth: 1650,
+    maxWidth: 1900,
     webPreferences: {
       // devTools: true, // see in docs what is it for
       nodeIntegration: true,
