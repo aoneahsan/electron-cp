@@ -1,53 +1,87 @@
+const fs = require("fs");
+const path = require("path");
 const $ = require("jquery");
+
+let readerJSFileContent, readerWindow;
+fs.readFile(path.resolve(__dirname, "reader.js"), (err, data) => {
+  if (err) {
+    console.log("Error while reading reader.js content == err = ", err);
+  }
+  readerJSFileContent = data.toString();
+});
 
 const ITEMS_KEY = "app-items";
 
 const itemsCon = $("#items_con");
 const noItemsCon = $("#no_items_con");
+const search = $("#search");
 
-const storage = JSON.parse(localStorage.getItem(ITEMS_KEY)) || [];
+let storage = JSON.parse(localStorage.getItem(ITEMS_KEY)) || [];
 
 let noItemFoundInStorage = true;
 
 const makeItemTemplate = (data, isFirst = false) => {
-  return `<div
-  class="sm:flex shadow-lg mx-6 sm:mx-auto mt-5 max-w-lg sm:max-w-2xl sm:h-44 border-l-8 ${
-    isFirst ? "border-indigo-700" : ""
-  }"
->
-  <img
-    class="h-full w-full sm:w-1/3 object-cover rounded-lg rounded-r-none pb-5/6"
+  let newNode = $(`<div
+    data-url="${data.url}"
+    data-id="${data.id}"
+    class="flex shadow-lg mx-auto mt-5 max-w-2xl h-44 border-l-8 item-con group ${
+      isFirst ? "border-indigo-700" : ""
+    }"
+  >`);
+  newNode.append(`<img
+    class="h-full w-1/3 object-cover rounded-lg group-hover:bg-gray-300 rounded-r-none pb-5/6"
     src="${data.screenshort}"
     alt="bag"
-  />
-  <div class="w-full sm:w-2/3 px-4 py-4 bg-white rounded-lg">
+    />
+    <div class="w-2/3 px-4 py-4 bg-white rounded-lg group-hover:bg-gray-300">
     <div class="flex items-center">
-      <h2 class="text-xl text-gray-800 font-medium mr-auto">
+      <h2 class="text-xl text-gray-800 font-medium group-hover:bg-gray-300 mr-auto item-con__title">
         ${data.title}
       </h2>
     </div>
     <p class="text-sm text-gray-700 mt-4">
       URL: ${data.url}
     </p>
-    <!-- <div class="flex items-center justify-end mt-4 top-auto">
-      <button
-        class="bg-white text-red-500 px-4 py-2 rounded ml-auto hover:underline"
-        data-id="${data.id}"
-      >
-        Delete
-      </button>
-    </div> -->
-  </div>
-</div>`;
+  </div>`);
+  return newNode;
 };
 
 const save = () => {
   localStorage.setItem(ITEMS_KEY, JSON.stringify(storage));
 };
 
+const selectItem = (e) => {
+  $(".item-con.border-indigo-700").removeClass("border-indigo-700");
+  e.currentTarget.classList.add("border-indigo-700");
+};
+
+const openItemURL = (item) => {
+  const itemID = item.currentTarget.dataset.id;
+  const itemURL = item.currentTarget.dataset.url;
+
+  // open url in a new win
+  readerWindow = window.open(
+    itemURL,
+    "",
+    `
+    maxWidth=2000,
+    maxHeight=2000,
+    width=200,
+    height=200,
+    backgroundColor=#ded,
+    nodeIntegration=0,
+    contentIsolation=1,
+  `
+  );
+
+  readerWindow.eval(readerJSFileContent.replace("{{index}}", itemID));
+};
+
 const addItem = (item, isNew = false, isFirst = false) => {
   const itemT = makeItemTemplate(item, isFirst);
   itemsCon.append(itemT);
+  itemT.on("click", selectItem);
+  itemT.on("dblclick", openItemURL);
   if (isNew) {
     storage.push(item);
     save();
@@ -77,4 +111,57 @@ const renderItems = () => {
 
 renderItems();
 
+let hasMatch;
+search.on("keyup", (e) => {
+  const titles = Array.from($(".item-con__title")).forEach((el) => {
+    // console.log("el = ", el);
+    hasMatch = $(el).text().trim().toLocaleLowerCase().includes(search.val());
+    if (!hasMatch) {
+      $(el).parentsUntil(".item-con").parent().addClass("hidden");
+    } else {
+      $(el).parentsUntil(".item-con").parent().removeClass("hidden");
+    }
+  });
+  console.log(titles);
+});
+
+// selecting item with keyboard keys
+$(document).on("keyup", (e) => {
+  if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+    const currentItem = $(".item-con.border-indigo-700");
+    if (e.key === "ArrowUp" && currentItem.prev().length > 0) {
+      currentItem.removeClass("border-indigo-700");
+      currentItem.prev().addClass("border-indigo-700");
+    } else if (e.key === "ArrowDown" && currentItem.next().length > 0) {
+      currentItem.removeClass("border-indigo-700");
+      currentItem.next().addClass("border-indigo-700");
+    }
+  }
+});
+
+const deleteItem = (index) => {
+  const newData = storage.splice(index, 1);
+
+  storage = newData;
+
+  renderItems();
+};
+
+// EXPORTS
 exports.addItem = addItem;
+
+// Listen for Window Message Event from proxy brower
+window.addEventListener("message", (e) => {
+  const index = storage.findIndex((el) => el.id == e.data.itemIndex);
+  console.log("index = ", index);
+
+  deleteItem(index);
+
+  if (storage.length > 0) {
+    const item = $(".item-con.border-indigo-700");
+    item.removeClass("border-indigo-700");
+    item.prev().length > 0
+      ? item.prev().addClass("border-indigo-700")
+      : item.next().addClass("border-indigo-700");
+  }
+});
