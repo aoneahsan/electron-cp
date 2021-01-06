@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const $ = require("jquery");
+const { shell, ipcRenderer } = require("electron");
 
 let readerJSFileContent, readerWindow;
 fs.readFile(path.resolve(__dirname, "reader.js"), (err, data) => {
@@ -15,6 +16,7 @@ const ITEMS_KEY = "app-items";
 const itemsCon = $("#items_con");
 const noItemsCon = $("#no_items_con");
 const search = $("#search");
+const testBtn = $("#test");
 
 let storage = JSON.parse(localStorage.getItem(ITEMS_KEY)) || [];
 
@@ -55,10 +57,7 @@ const selectItem = (e) => {
   e.currentTarget.classList.add("border-indigo-700");
 };
 
-const openItemURL = (item) => {
-  const itemID = item.currentTarget.dataset.id;
-  const itemURL = item.currentTarget.dataset.url;
-
+const openItemURL = (itemID, itemURL) => {
   // open url in a new win
   readerWindow = window.open(
     itemURL,
@@ -81,7 +80,9 @@ const addItem = (item, isNew = false, isFirst = false) => {
   const itemT = makeItemTemplate(item, isFirst);
   itemsCon.append(itemT);
   itemT.on("click", selectItem);
-  itemT.on("dblclick", openItemURL);
+  itemT.on("dblclick", (e) =>
+    openItemURL(e.currentTarget.dataset.id, e.currentTarget.dataset.url)
+  );
   if (isNew) {
     storage.push(item);
     save();
@@ -114,7 +115,6 @@ renderItems();
 let hasMatch;
 search.on("keyup", (e) => {
   const titles = Array.from($(".item-con__title")).forEach((el) => {
-    // console.log("el = ", el);
     hasMatch = $(el).text().trim().toLocaleLowerCase().includes(search.val());
     if (!hasMatch) {
       $(el).parentsUntil(".item-con").parent().addClass("hidden");
@@ -122,7 +122,6 @@ search.on("keyup", (e) => {
       $(el).parentsUntil(".item-con").parent().removeClass("hidden");
     }
   });
-  console.log(titles);
 });
 
 // selecting item with keyboard keys
@@ -140,20 +139,7 @@ $(document).on("keyup", (e) => {
 });
 
 const deleteItem = (index, itemID) => {
-  storage.splice(index, 1);
-  save();
-  $(`[data-id="${itemID}"]`).remove();
-};
-
-// EXPORTS
-exports.addItem = addItem;
-
-// Listen for Window Message Event from proxy brower
-window.addEventListener("message", (e) => {
-  const index = storage.findIndex((el) => el.id == e.data.itemIndex);
-
-  deleteItem(index, e.data.itemIndex);
-
+  // selecting another item
   if (storage.length > 0) {
     const item = $(".item-con.border-indigo-700");
     item.removeClass("border-indigo-700");
@@ -161,6 +147,65 @@ window.addEventListener("message", (e) => {
       ? item.prev().addClass("border-indigo-700")
       : item.next().addClass("border-indigo-700");
   }
+  // deleting item from storage
+  storage.splice(index, 1);
+  // saving storage
+  save();
+  // removing item from DOM
+  $(`[data-id="${itemID}"]`).remove();
+};
+
+// Listen for Window Message Event from proxy brower
+window.addEventListener("message", (e) => {
+  const index = storage.findIndex((el) => el.id == e.data.itemIndex);
+
+  deleteItem(index, e.data.itemIndex);
 
   e.source.close();
 });
+
+testBtn.on("click", () => {
+  alert("Test any code using this");
+});
+
+const openItem = () => {
+  const currentItemData = $(".item-con.border-indigo-700").data();
+  openItemURL(currentItemData.id, currentItemData.url);
+};
+
+const deleteItemFromApp = () => {
+  const currentItemData = $(".item-con.border-indigo-700").data();
+  const index = storage.findIndex((el) => el.id == currentItemData.id);
+  deleteItem(index, currentItemData.id);
+};
+
+const openItemInShell = () => {
+  const currentItemData = $(".item-con.border-indigo-700").data();
+  shell.openExternal(currentItemData.url);
+};
+
+// #################################################################
+// ########      Listining for events from main window      ########
+// #################################################################
+
+ipcRenderer.on("openItemInAPP", (data) => {
+  openItem();
+});
+
+ipcRenderer.on("deleteItemFromApp", (data) => {
+  deleteItemFromApp();
+});
+
+ipcRenderer.on("openItemInShell", (data) => {
+  openItemInShell();
+});
+
+ipcRenderer.on("searchItem", (data) => {
+  search.focus();
+});
+
+// #################################################################
+// #####################      Exports      #########################
+// #################################################################
+
+exports.addItem = addItem;

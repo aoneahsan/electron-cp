@@ -15,16 +15,12 @@ const createWindow = (url, callbacks) => {
 
   websiteWindow.loadURL(url);
 
-  console.log("renderItem.js == working...");
   websiteWindow.webContents.on("did-finish-load", (e) => {
     let title = websiteWindow.getTitle();
 
-    console.log("renderItem.js == title = ", title);
-
     websiteWindow.webContents.capturePage().then((image) => {
       let screenshort = image.toDataURL();
-      console.log("renderItem.js == screenshort done.");
-
+      
       callbacks({ id: Math.random().toString(), title, screenshort, url });
 
       websiteWindow.close();

@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="main.css" />
   </head>
   <body>
+    <!-- <button id="test" style="position: fixed; bottom: 15px; right: 20px;">Test</button> -->
     <!-- image search box -->
     <div class="box fixed w-full mt-0">
       <div class="box-wrapper">
@@ -44,7 +45,7 @@
           <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
         </div>
         <span
-          class="hidden sm:inline-block sm:align-middle sm:h-screen"
+          class="hidden sm:inline-block align-middle h-screen"
           aria-hidden="true"
           >&#8203;</span
         >
@@ -67,7 +68,8 @@
                   <input
                     type="text"
                     id="title"
-                    value="https://google.com"
+                    data-value="https://google.com"
+                    value=""
                     name="item-title"
                     class="border border-solid w-full py-2 px-6"
                   />
@@ -95,5 +97,6 @@
   </body>
   <script>
     require("./app.js");
+    // require("./menu.js");
   </script>
 </html>

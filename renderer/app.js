@@ -31,7 +31,6 @@ const enableAddBtn = () => {
 
 add_item.on("click", function () {
   if (item_title.val() && !processingNewItemRequest) {
-    // console.log("item_title = ", item_title.val());
     ipcRenderer.send("new-item", item_title.val());
 
     disableAddBtn();
@@ -51,6 +50,9 @@ item_title.on("keyup", function (e) {
   if (e.key === "Enter" && !processingNewItemRequest) {
     add_item.click();
   }
+  if (e.key === "Escape" && !processingNewItemRequest) {
+    close_modal.click();
+  }
 });
 
 // Event - new item success event
@@ -59,4 +61,12 @@ ipcRenderer.on("new-item-success", (e, data) => {
   enableAddBtn();
   close_modal.click();
   item_title.val("");
+});
+
+// #################################################################
+// ########      Listining for events from main window      ########
+// #################################################################
+
+ipcRenderer.on("openAddItemModal", (data) => {
+  showModal.click();
 });
