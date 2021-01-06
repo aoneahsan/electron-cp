@@ -1,8 +1,5 @@
-// alert("ok");
 const $ = require("jquery");
-const { remote, ipcRenderer, TouchBarOtherItemsProxy } = require("electron");
-// const {  } = remote;
-// const icon = require("boxicons");
+const { ipcRenderer } = require("electron");
 const items = require("./items");
 
 const modal_con = $("#modal-con");
@@ -11,7 +8,6 @@ const showModal = $("#showModal");
 const item_title = $("#title");
 const add_item = $(".add-item");
 let processingNewItemRequest = false;
-// const close_modal = $(".close-modal");
 
 const disableAddBtn = () => {
   add_item.addClass("disable");

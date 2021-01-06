@@ -65,8 +65,8 @@ const openItemURL = (itemID, itemURL) => {
     `
     maxWidth=2000,
     maxHeight=2000,
-    width=200,
-    height=200,
+    width=1200,
+    height=800,
     backgroundColor=#ded,
     nodeIntegration=0,
     contentIsolation=1,
@@ -77,6 +77,9 @@ const openItemURL = (itemID, itemURL) => {
 };
 
 const addItem = (item, isNew = false, isFirst = false) => {
+  if (storage.length === 0) {
+    isFirst = true;
+  }
   const itemT = makeItemTemplate(item, isFirst);
   itemsCon.append(itemT);
   itemT.on("click", selectItem);
@@ -100,7 +103,6 @@ const renderItems = () => {
       addItem(item, false, index == 0);
     });
     itemsCon.removeClass("hidden");
-    // debugger;
     noItemsCon.addClass("hidden");
     noItemFoundInStorage = false;
   } else {
@@ -153,6 +155,10 @@ const deleteItem = (index, itemID) => {
   save();
   // removing item from DOM
   $(`[data-id="${itemID}"]`).remove();
+  if (storage.length === 0) {
+    noItemsCon.removeClass("hidden");
+    itemsCon.addClass("hidden");
+  }
 };
 
 // Listen for Window Message Event from proxy brower
@@ -162,10 +168,6 @@ window.addEventListener("message", (e) => {
   deleteItem(index, e.data.itemIndex);
 
   e.source.close();
-});
-
-testBtn.on("click", () => {
-  alert("Test any code using this");
 });
 
 const openItem = () => {

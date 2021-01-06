@@ -13,8 +13,8 @@ const createMainWindow = () => {
 
   // this is to save the last state of app (like what was the location of app when it closed)
   let mainWindowState = electronWindowState({
-    defaultWidth: 400,
-    defaultHeight: 600,
+    defaultWidth: 600,
+    defaultHeight: 700,
   });
 
   // creating a new browser window object for app
