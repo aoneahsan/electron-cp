@@ -1,6 +1,6 @@
 {
   "name": "electron-app",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "electron app, demo electron app.",
   "main": "main.js",
   "scripts": {
@@ -11,7 +11,11 @@
     "build:mac": "electron-builder -m",
     "build:win": "electron-builder -w",
     "build:linux": "electron-builder -l",
-    "release": "electron-builder -l --publish 'onTagOrDraft'"
+    "release": "electron-builder --publish 'onTagOrDraft'",
+    "release:linux": "electron-builder -l --publish 'onTagOrDraft'",
+    "release:win": "electron-builder -w --publish 'onTagOrDraft'",
+    "release:mac": "electron-builder -m --publish 'onTagOrDraft'",
+    "release:all": "electron-builder -mwl --publish 'onTagOrDraft'"
   },
   "repository": {
     "type": "git",

@@ -1,9 +1,72 @@
-const { app, BrowserWindow, ipcMain, Menu, shell } = require("electron");
+const {
+  app,
+  BrowserWindow,
+  ipcMain,
+  Menu,
+  shell,
+  TouchBar,
+} = require("electron");
 const electronWindowState = require("electron-window-state");
 
 // cusotm fiels
 const renderItem = require("./renderItem.js");
 const autoUpdater = require("./auto-updater.js");
+
+// ######################################################################
+// ################        APP TOUCHBAR (MAC ONLY)        ###############
+// ######################################################################
+
+const tbLabel = new TouchBar.TouchBarLabel({
+  label: "Theme",
+});
+
+const tbColorPicker = new TouchBar.TouchBarColorPicker({
+  change: (color) => {
+    mainWindow.webContents.insertCSS(`
+      body {
+        background-color: ${color};
+      }
+    `);
+  },
+});
+
+const tbSlider = new TouchBar.TouchBarSlider({
+  label: "Size",
+  minValue: 800,
+  maxValue: 1400,
+  value: 800,
+  change: (val) => {
+    mainWindow.webContents.setSize(val, val, true);
+  },
+});
+
+const tbPopover = new TouchBar.TouchBarPopover({
+  label: "Size",
+  items: new TouchBar({
+    items: [tbSlider],
+  }),
+});
+
+const tbSpacer = new TouchBar.TouchBarSpacer({
+  size: "flexible",
+});
+
+const tbDevtoolsBtn = new TouchBar.TouchBarButton({
+  label: "DevTools",
+  icon: `${__dirname}/build/dev-tools-icon.jpg`,
+  iconPosition: "left",
+  click: () => {
+    mainWindow.webContents.openDevTools();
+  },
+});
+
+const touchBar = new TouchBar({
+  items: [tbLabel, tbColorPicker, tbPopover, tbSpacer, tbDevtoolsBtn],
+});
+
+// ######################################################################
+// ###############        APP WINDOW CREATION, LOCIC        #############
+// ######################################################################
 
 let mainWindow;
 
@@ -13,8 +76,8 @@ const createMainWindow = () => {
 
   // this is to save the last state of app (like what was the location of app when it closed)
   let mainWindowState = electronWindowState({
-    defaultWidth: 600,
-    defaultHeight: 700,
+    defaultWidth: 800,
+    defaultHeight: 800,
   });
 
   // creating a new browser window object for app
@@ -46,6 +109,11 @@ const createMainWindow = () => {
   mainWindow.on("closed", () => {
     mainWindow = null;
   });
+
+  // adding touchbar if its a mac book
+  if (process.platform === "darwin") {
+    mainWindow.setTouchBar(touchBar);
+  }
 };
 
 // on browser window ready starting loading our content
@@ -95,6 +163,10 @@ const openItemInShell = () => {
 const searchItem = () => {
   mainWindow.webContents.send("searchItem", true);
 };
+
+// ######################################################################
+// ######################        APP MENU        ########################
+// ######################################################################
 
 const menuTemplate = [
   {
