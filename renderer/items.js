@@ -139,12 +139,10 @@ $(document).on("keyup", (e) => {
   }
 });
 
-const deleteItem = (index) => {
-  const newData = storage.splice(index, 1);
-
-  storage = newData;
-
-  renderItems();
+const deleteItem = (index, itemID) => {
+  storage.splice(index, 1);
+  save();
+  $(`[data-id="${itemID}"]`).remove();
 };
 
 // EXPORTS
@@ -153,9 +151,8 @@ exports.addItem = addItem;
 // Listen for Window Message Event from proxy brower
 window.addEventListener("message", (e) => {
   const index = storage.findIndex((el) => el.id == e.data.itemIndex);
-  console.log("index = ", index);
 
-  deleteItem(index);
+  deleteItem(index, e.data.itemIndex);
 
   if (storage.length > 0) {
     const item = $(".item-con.border-indigo-700");
@@ -164,4 +161,6 @@ window.addEventListener("message", (e) => {
       ? item.prev().addClass("border-indigo-700")
       : item.next().addClass("border-indigo-700");
   }
+
+  e.source.close();
 });
