@@ -4,7 +4,7 @@ const {
   ipcMain,
   Menu,
   shell,
-  TouchBar,
+  // TouchBar,
 } = require("electron");
 const electronWindowState = require("electron-window-state");
 
@@ -16,53 +16,53 @@ const autoUpdater = require("./auto-updater.js");
 // ################        APP TOUCHBAR (MAC ONLY)        ###############
 // ######################################################################
 
-const tbLabel = new TouchBar.TouchBarLabel({
-  label: "Theme",
-});
+// const tbLabel = new TouchBar.TouchBarLabel({
+//   label: "Theme",
+// });
 
-const tbColorPicker = new TouchBar.TouchBarColorPicker({
-  change: (color) => {
-    mainWindow.webContents.insertCSS(`
-      body {
-        background-color: ${color};
-      }
-    `);
-  },
-});
+// const tbColorPicker = new TouchBar.TouchBarColorPicker({
+//   change: (color) => {
+//     mainWindow.webContents.insertCSS(`
+//       body {
+//         background-color: ${color};
+//       }
+//     `);
+//   },
+// });
 
-const tbSlider = new TouchBar.TouchBarSlider({
-  label: "Size",
-  minValue: 800,
-  maxValue: 1400,
-  value: 800,
-  change: (val) => {
-    mainWindow.webContents.setSize(val, val, true);
-  },
-});
+// const tbSlider = new TouchBar.TouchBarSlider({
+//   label: "Size",
+//   minValue: 800,
+//   maxValue: 1400,
+//   value: 800,
+//   change: (val) => {
+//     mainWindow.webContents.setSize(val, val, true);
+//   },
+// });
 
-const tbPopover = new TouchBar.TouchBarPopover({
-  label: "Size",
-  items: new TouchBar({
-    items: [tbSlider],
-  }),
-});
+// const tbPopover = new TouchBar.TouchBarPopover({
+//   label: "Size",
+//   items: new TouchBar({
+//     items: [tbSlider],
+//   }),
+// });
 
-const tbSpacer = new TouchBar.TouchBarSpacer({
-  size: "flexible",
-});
+// const tbSpacer = new TouchBar.TouchBarSpacer({
+//   size: "flexible",
+// });
 
-const tbDevtoolsBtn = new TouchBar.TouchBarButton({
-  label: "DevTools",
-  icon: `${__dirname}/build/dev-tools-icon.jpg`,
-  iconPosition: "left",
-  click: () => {
-    mainWindow.webContents.openDevTools();
-  },
-});
+// const tbDevtoolsBtn = new TouchBar.TouchBarButton({
+//   label: "DevTools",
+//   icon: `${__dirname}/build/dev-tools-icon.jpg`,
+//   iconPosition: "left",
+//   click: () => {
+//     mainWindow.webContents.openDevTools();
+//   },
+// });
 
-const touchBar = new TouchBar({
-  items: [tbLabel, tbColorPicker, tbPopover, tbSpacer, tbDevtoolsBtn],
-});
+// const touchBar = new TouchBar({
+//   items: [tbLabel, tbColorPicker, tbPopover, tbSpacer, tbDevtoolsBtn],
+// });
 
 // ######################################################################
 // ###############        APP WINDOW CREATION, LOCIC        #############
@@ -111,9 +111,9 @@ const createMainWindow = () => {
   });
 
   // adding touchbar if its a mac book
-  if (process.platform === "darwin") {
-    mainWindow.setTouchBar(touchBar);
-  }
+  // if (process.platform === "darwin") {
+  //   mainWindow.setTouchBar(touchBar);
+  // }
 };
 
 // on browser window ready starting loading our content
@@ -219,7 +219,7 @@ const menuTemplate = [
 // Adding first menu item with label of app name (only for mac it is required in mac)
 if (process.platform === "darwin") {
   menuTemplate.unshift({
-    label: remote.app.getName(),
+    label: "Electron App",
     submenu: [
       { role: "about" },
       { type: "separator" },
