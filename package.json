@@ -1,6 +1,6 @@
 {
   "name": "electron-app",
-  "version": "1.1.0",
+  "version": "1.0.0",
   "description": "electron app, demo electron app.",
   "main": "main.js",
   "scripts": {
@@ -19,7 +19,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ahsanmahmood/electron-cp.git"
+    "url": "git+https://github.com/ahsanmahmood/electron-app-releases.git"
   },
   "keywords": [
     "electron, zaions, demo, aoneahsan"
@@ -27,9 +27,9 @@
   "author": "Ahsan Mahmood",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/ahsanmahmood/electron-cp/issues"
+    "url": "https://github.com/ahsanmahmood/electron-app-releases/issues"
   },
-  "homepage": "https://github.com/ahsanmahmood/electron-cp#readme",
+  "homepage": "https://github.com/ahsanmahmood/electron-app-releases#readme",
   "dependencies": {
     "autoprefixer": "^10.1.0",
     "boxicons": "^2.0.7",
